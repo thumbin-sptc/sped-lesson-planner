@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>어울림1반 수업 설계 도구</title>
+<style>
+  :root {
+    --teal: #1D9E75;
+    --teal-light: #E1F5EE;
+    --teal-dark: #085041;
+    --blue: #378ADD;
+    --blue-light: #E6F1FB;
+    --blue-dark: #0C447C;
+    --amber: #EF9F27;
+    --amber-light: #FAEEDA;
+    --amber-dark: #633806;
+    --coral: #D85A30;
+    --coral-light: #FAECE7;
+    --purple: #7F77DD;
+    --purple-light: #EEEDFE;
+    --purple-dark: #3C3489;
+    --gray-50: #F8F7F4;
+    --gray-100: #F1EFE8;
+    --gray-200: #D3D1C7;
+    --gray-400: #888780;
+    --gray-600: #5F5E5A;
+    --gray-900: #2C2C2A;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.07);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.09);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-900);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: white;
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 2rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .site-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-mark {
+    width: 32px;
+    height: 32px;
+    background: var(--teal);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logo-mark svg { width: 18px; height: 18px; }
+  .logo-text {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gray-900);
+    letter-spacing: -0.3px;
+  }
+  .logo-sub {
+    font-size: 12px;
+    color: var(--gray-400);
+    margin-top: -2px;
+  }
+  .header-badge {
+    font-size: 12px;
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    padding: 4px 10px;
+    border-radius: 99px;
+    font-weight: 500;
+  }
+
+  /* ── Layout ── */
+  .main {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* ── Progress ── */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 2rem;
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .prog-item {
+    flex: 1;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--gray-400);
+    border-right: 1px solid var(--gray-200);
+    transition: all 0.2s;
+    cursor: default;
+  }
+  .prog-item:last-child { border-right: none; }
+  .prog-item.active {
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    font-weight: 600;
+  }
+  .prog-item.done {
+    background: var(--gray-50);
+    color: var(--teal);
+    cursor: pointer;
+  }
+  .prog-item.done:hover { background: var(--teal-light); }
+  .prog-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--gray-200);
+    color: var(--gray-600);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .prog-item.active .prog-num {
+    background: var(--teal);
+    color: white;
+  }
+  .prog-item.done .prog-num {
+    background: var(--teal);
+    color: white;
+  }
+  .prog-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ── Step Cards ── */
+  .step-card {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1rem;
+  }
+  .step-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .step-card-desc {
+    font-size: 13px;
+    color: var(--gray-600);
+    margin-bottom: 1.25rem;
+  }
+
+  /* ── Subject Buttons ── */
+  .subj-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .subj-btn {
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--gray-200);
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--gray-600);
+    font-weight: 500;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .subj-btn:hover { border-color: var(--gray-400); color: var(--gray-900); }
+  .subj-btn.g1-selected {
+    border-color: var(--teal);
+    background: var(--teal-light);
+    color: var(--teal-dark);
+  }
+  .subj-btn.g3-selected {
+    border-color: var(--blue);
+    background: var(--blue-light);
+    color: var(--blue-dark);
+  }
+
+  .grade-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .grade-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  /* ── Lesson List ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 600px) {
+    .two-col { grid-template-columns: 1fr; }
+    .prog-label { display: none; }
+    .main { padding: 1rem 1rem 4rem; }
+  }
+
+  .col-wrap { display: flex; flex-direction: column; }
+  .col-header {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 7px 12px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+  }
+  .col-header.g1 { background: var(--teal-light); color: var(--teal-dark); }
+  .col-header.g3 { background: var(--blue-light); color: var(--blue-dark); }
+
+  .scroll-list {
+    max-height: 320px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-right: 2px;
+  }
+  .scroll-list::-webkit-scrollbar { width: 4px; }
+  .scroll-list::-webkit-scrollbar-track { background: transparent; }
+  .scroll-list::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 2px; }
+
+  .lesson-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 9px 11px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.12s;
+    background: white;
+  }
+  .lesson-item:hover { border-color: var(--gray-400); background: var(--gray-50); }
+  .lesson-item.g1-sel { border-color: var(--teal); background: var(--teal-light); }
+  .lesson-item.g3-sel { border-color: var(--blue); background: var(--blue-light); }
+
+  .checkbox {
+    width: 17px;
+    height: 17px;
+    border: 2px solid var(--gray-200);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.12s;
+  }
+  .lesson-item.g1-sel .checkbox { background: var(--teal); border-color: var(--teal); }
+  .lesson-item.g3-sel .checkbox { background: var(--blue); border-color: var(--blue); }
+  .checkbox-tick {
+    width: 9px;
+    height: 6px;
+    border-left: 2px solid white;
+    border-bottom: 2px solid white;
+    transform: rotate(-45deg) translateY(-1px);
+    display: none;
+  }
+  .lesson-item.g1-sel .checkbox-tick,
+  .lesson-item.g3-sel .checkbox-tick { display: block; }
+
+  .lesson-info { flex: 1; min-width: 0; }
+  .lesson-unit { font-size: 11px; color: var(--gray-400); margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lesson-topic { font-size: 13px; font-weight: 600; color: var(--gray-900); line-height: 1.4; }
+  .lesson-content { font-size: 11px; color: var(--gray-400); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lesson-item.g1-sel .lesson-unit,
+  .lesson-item.g1-sel .lesson-content { color: var(--teal); }
+  .lesson-item.g3-sel .lesson-unit,
+  .lesson-item.g3-sel .lesson-content { color: var(--blue-dark); opacity: 0.7; }
+
+  /* ── Students ── */
+  .student-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 8px;
+  }
+  .student-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    background: white;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    transition: all 0.15s;
+  }
+  .student-btn:hover { border-color: var(--amber); background: var(--amber-light); }
+  .student-btn.sel {
+    border-color: var(--amber);
+    background: var(--amber-light);
+  }
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .av-teal { background: #9FE1CB; color: var(--teal-dark); }
+  .av-amber { background: #FAC775; color: var(--amber-dark); }
+  .av-pink { background: #F4C0D1; color: #72243E; }
+  .av-blue { background: #B5D4F4; color: var(--blue-dark); }
+  .av-green { background: #C0DD97; color: #27500A; }
+  .student-name { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+  .student-meta { font-size: 11px; color: var(--gray-600); margin-top: 1px; }
+  .aac-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 99px;
+    background: var(--purple-light);
+    color: var(--purple-dark);
+    font-weight: 600;
+    margin-top: 3px;
+  }
+
+  /* ── Summary chips ── */
+  .chip-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 99px;
+    font-weight: 500;
+  }
+  .chip-teal { background: var(--teal-light); color: var(--teal-dark); }
+  .chip-blue { background: var(--blue-light); color: var(--blue-dark); }
+  .chip-amber { background: var(--amber-light); color: var(--amber-dark); }
+
+  /* ── Buttons ── */
+  .btn-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.25rem;
+    gap: 8px;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    background: var(--teal);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn-primary:hover { background: var(--teal-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(29,158,117,0.3); }
+  .btn-primary:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-ai {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 11px 22px;
+    background: linear-gradient(135deg, #1D9E75, #185FA5);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    transition: all 0.15s;
+    box-shadow: 0 4px 14px rgba(29,158,117,0.35);
+  }
+  .btn-ai:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(29,158,117,0.4); }
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    background: white;
+    color: var(--gray-600);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+    transition: all 0.12s;
+  }
+  .btn-ghost:hover { background: var(--gray-100); }
+
+  /* ── Prompt preview ── */
+  .prompt-box {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    max-height: 200px;
+    overflow-y: auto;
+    color: var(--gray-600);
+    font-family: 'Menlo', 'Monaco', monospace;
+  }
+  .prompt-box::-webkit-scrollbar { width: 4px; }
+  .prompt-box::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 2px; }
+
+  /* ── Divider ── */
+  .divider {
+    height: 1px;
+    background: var(--gray-200);
+    margin: 1.25rem 0;
+  }
+
+  /* ── IEP preview in step 3 ── */
+  .iep-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+  .iep-item {
+    background: var(--purple-light);
+    border-left: 3px solid var(--purple);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 8px 12px;
+  }
+  .iep-name { font-size: 12px; font-weight: 700; color: var(--purple-dark); margin-bottom: 2px; }
+  .iep-text { font-size: 12px; color: var(--gray-600); line-height: 1.6; }
+
+  /* ── Notice box ── */
+  .notice {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: var(--amber-light);
+    border: 1px solid #FAC775;
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    margin-bottom: 1rem;
+    font-size: 13px;
+    color: var(--amber-dark);
+  }
+  .notice-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── Step 4 result area ── */
+  .result-area {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1rem;
+  }
+  .result-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-400);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .empty-msg {
+    text-align: center;
+    color: var(--gray-400);
+    font-size: 13px;
+    padding: 2rem;
+  }
+  .empty-msg .big { font-size: 2rem; margin-bottom: 8px; }
+
+  /* ── Animations ── */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .step-card, .progress-wrap, .result-area { animation: fadeIn 0.25s ease; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="6" height="6" rx="1.5" fill="white" opacity="0.9"/>
+        <rect x="10" y="2" width="6" height="6" rx="1.5" fill="white" opacity="0.6"/>
+        <rect x="2" y="10" width="6" height="6" rx="1.5" fill="white" opacity="0.6"/>
+        <rect x="10" y="10" width="6" height="6" rx="1.5" fill="white" opacity="0.9"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text">어울림1반 수업 설계 도구</div>
+      <div class="logo-sub">2026학년도 1학기 · 1·3학년 혼합 특수학급</div>
+    </div>
+  </div>
+  <span class="header-badge">Claude AI 연동</span>
+</header>
+
+<main class="main">
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="prog-item active" id="prog-1" onclick="jumpStep(1)">
+      <div class="prog-num" id="pn-1">1</div>
+      <span class="prog-label">교과 선택</span>
+    </div>
+    <div class="prog-item" id="prog-2" onclick="jumpStep(2)">
+      <div class="prog-num" id="pn-2">2</div>
+      <span class="prog-label">차시 연계</span>
+    </div>
+    <div class="prog-item" id="prog-3" onclick="jumpStep(3)">
+      <div class="prog-num" id="pn-3">3</div>
+      <span class="prog-label">학생 선택</span>
+    </div>
+    <div class="prog-item" id="prog-4" onclick="jumpStep(4)">
+      <div class="prog-num" id="pn-4">4</div>
+      <span class="prog-label">수업 설계</span>
+    </div>
+  </div>
+
+  <div id="step-content"></div>
+</main>
+
+<script>
+const CURRICULUM = {
+  "1학년_국어": [
+    {unit:"1. 글자를 만들어요", topic:"글자에서 자음자와 모음자 찾기", content:"자음자·모음자 찾기 / 글자 만들기"},
+    {unit:"1. 글자를 만들어요", topic:"받침이 없는 글자의 짜임 알기", content:"여러 가지 글자의 짜임 알아보기"},
+    {unit:"2. 받침이 있는 글자를 읽어요", topic:"받침이 있는 글자 읽기", content:"받침 있는 글자 짜임 / 소리 내어 읽기"},
+    {unit:"2. 받침이 있는 글자를 읽어요", topic:"바른 자세로 발표하기", content:"바른 자세 / 자기소개하기"},
+    {unit:"3. 낱말과 친해져요", topic:"받침이 있는 글자 쓰기", content:"받침 있는 글자 쓰기 / 낱말 읽기"},
+    {unit:"4. 여러 가지 낱말을 익혀요", topic:"몸·감각 관련 낱말 익히기", content:"몸, 감각 관련 낱말 / 그림책 감상"},
+    {unit:"4. 여러 가지 낱말을 익혀요", topic:"나와 가족 관련 낱말 읽고 쓰기", content:"가족 낱말 익히기 / 그림책 감상"},
+    {unit:"4. 여러 가지 낱말을 익혀요", topic:"학교와 이웃 관련 낱말 익히기", content:"학교·이웃 낱말 / 그림책 감상"},
+    {unit:"5. 반갑게 인사해요", topic:"알맞은 인사말 알기", content:"상황에 맞는 인사말 / 역할놀이"},
+    {unit:"5. 반갑게 인사해요", topic:"상황에 알맞은 인사말 하기", content:"인사 상황 알기 / 역할놀이"},
+    {unit:"5. 반갑게 인사해요", topic:"동시를 듣고 따라 읽기", content:"<저녁 인사> 읽기 / 글자와 소리 다른 낱말"},
+    {unit:"6. 또박또박 읽어요", topic:"여러 가지 문장 읽기", content:"문장 짜임 읽기 / 그림에 맞는 문장"},
+    {unit:"6. 또박또박 읽어요", topic:"문장 부호의 쓰임 알기", content:"문장 부호 익히기·쓰기 / 띄어 읽기"},
+    {unit:"6. 또박또박 읽어요", topic:"자연스럽게 문장 읽기", content:"<꽃에서 나온 코끼리> / 문장 부호 알맞게 띄어 읽기"},
+    {unit:"7. 알맞은 낱말을 찾아요", topic:"쌍받침 낱말 읽고 쓰기", content:"쌍받침 알아보기·쓰기"},
+    {unit:"7. 알맞은 낱말을 찾아요", topic:"그림을 보고 낱말 찾기", content:"그림에 어울리는 낱말·문장 완성"},
+    {unit:"7. 알맞은 낱말을 찾아요", topic:"그림을 보고 문장으로 말하기", content:"그림에 알맞은 낱말로 문장 말하기·쓰기"},
+  ],
+  "1학년_수학": [
+    {unit:"1. 9까지의 수", topic:"1~5 알아보기", content:"1~5 수 개념, 세기, 읽기, 쓰기"},
+    {unit:"1. 9까지의 수", topic:"6~9 알아보기", content:"6~9 수 개념, 세기, 읽기, 쓰기"},
+    {unit:"1. 9까지의 수", topic:"수의 순서 알기", content:"순서 말하기 / 순서대로 수 놀이"},
+    {unit:"1. 9까지의 수", topic:"0 알아보기", content:"아무것도 없는 것을 수로 나타내기"},
+    {unit:"1. 9까지의 수", topic:"두 수의 크기 비교", content:"두 수의 크기 비교하기"},
+    {unit:"2. 여러 가지 모양", topic:"모양 찾고 이름 지어 보기", content:"상자·기둥·공 모양 찾기, 이름 짓기"},
+    {unit:"2. 여러 가지 모양", topic:"모양 알아보기", content:"모양 쌓기·굴리기"},
+    {unit:"2. 여러 가지 모양", topic:"모양으로 만들어 보기", content:"모양으로 놀이터 만들기"},
+    {unit:"3. 덧셈과 뺄셈", topic:"모으기와 가르기(1)", content:"그림 보고 모으기·가르기"},
+    {unit:"3. 덧셈과 뺄셈", topic:"모으기와 가르기(2)", content:"구체물로 모으기·가르기"},
+    {unit:"3. 덧셈과 뺄셈", topic:"덧셈 알아보기", content:"덧셈 상황(첨가·합병) / 덧셈식 쓰기"},
+    {unit:"3. 덧셈과 뺄셈", topic:"뺄셈 알아보기", content:"뺄셈 상황(제거·비교) / 뺄셈식 쓰기"},
+    {unit:"3. 덧셈과 뺄셈", topic:"0이 있는 덧셈과 뺄셈", content:"0을 더하거나 빼기"},
+    {unit:"4. 비교하기", topic:"길이 비교하기", content:"길다/짧다 / 두·세 물건 길이 비교"},
+    {unit:"4. 비교하기", topic:"무게 비교하기", content:"무겁다/가볍다 / 무게 비교 놀이"},
+    {unit:"4. 비교하기", topic:"넓이 비교하기", content:"넓다/좁다 / 넓이 비교 놀이"},
+    {unit:"4. 비교하기", topic:"들이 비교하기", content:"많다/적다 / 담을 수 있는 양 비교"},
+    {unit:"5. 50까지의 수", topic:"10 알기 / 십몇 알기", content:"10 세기·가르기 / 십몇 크기 비교"},
+    {unit:"5. 50까지의 수", topic:"50까지 수 세기", content:"10개씩 묶어 세기·읽기·쓰기"},
+    {unit:"5. 50까지의 수", topic:"50까지 수의 크기 비교", content:"50까지 수 크기 비교 놀이"},
+  ],
+  "3학년_국어": [
+    {unit:"2. 분명하고 유창하게", topic:"문장의 짜임 알기", content:"어찌하다/어떠하다 / 짜임에 맞게 표현"},
+    {unit:"2. 분명하고 유창하게", topic:"글 내용 파악하며 읽기", content:"소리 내어 읽기 연습"},
+    {unit:"2. 분명하고 유창하게", topic:"이야기를 실감 나게 읽기 ★", content:"장면 골라 실감 나게 읽기 (평가)"},
+    {unit:"1. 생생하게 표현해요", topic:"감각적 표현 알기", content:"감각적 표현 / 시 장면 상상·시화"},
+    {unit:"1. 생생하게 표현해요", topic:"상황에 알맞은 말투로 대화", content:"표정·몸짓·목소리로 역할놀이"},
+    {unit:"3. 짜임새 있는 글", topic:"중심·뒷받침 문장 구분", content:"문단 쓰기 방법 알기"},
+    {unit:"3. 짜임새 있는 글", topic:"소개하는 글 쓰기 ★", content:"소개하는 글 짜임새 있게 쓰기 (평가)"},
+    {unit:"매체 단원", topic:"매체 정보 전달 방법 알기", content:"매체별 정보 / 온라인 예절"},
+    {unit:"매체 단원", topic:"자료 조사·제작·댓글 쓰기 ★", content:"자료 제작·댓글 소통 (평가)"},
+    {unit:"4. 중요한 내용을 찾아요", topic:"중요한 내용 정리하는 방법 알기", content:"중요한 내용 파악 방법"},
+    {unit:"4. 중요한 내용을 찾아요", topic:"영상 보고 중요 내용 메모·발표 ★", content:"영상 보고 정리·발표 (평가)"},
+    {unit:"5. 인물에게 마음을 전해요", topic:"인물의 성격 파악하기", content:"인물 말·행동으로 성격 파악·역할극"},
+    {unit:"5. 인물에게 마음을 전해요", topic:"마음을 전하는 글 쓰기", content:"마음 나타내는 말 넣어 글 쓰기"},
+    {unit:"6. 자신 있게 읽고 써요", topic:"사실과 의견 구분하기", content:"사실·의견 구분하며 읽기·쓰기"},
+  ],
+  "3학년_수학": [
+    {unit:"1. 덧셈과 뺄셈", topic:"받아올림 없는 세 자리 수 덧셈", content:"(세 자리 수)+(세 자리 수)"},
+    {unit:"1. 덧셈과 뺄셈", topic:"받아올림 있는 세 자리 수 덧셈", content:"받아올림 한 번·여러 번"},
+    {unit:"1. 덧셈과 뺄셈", topic:"받아내림 있는 세 자리 수 뺄셈", content:"받아내림 없는·한 번·두 번"},
+    {unit:"2. 평면도형", topic:"선의 종류 알기", content:"선분·직선·반직선·각·직각"},
+    {unit:"2. 평면도형", topic:"직각삼각형 만들기·그리기", content:"직각삼각형 의미·특징"},
+    {unit:"2. 평면도형", topic:"직사각형·정사각형 분류 ★", content:"직사각형·정사각형 성질 (평가)"},
+    {unit:"3. 나눗셈", topic:"똑같이 나누어 가지기·덜어 내기", content:"등분제·포함제 / 나눗셈식"},
+    {unit:"3. 나눗셈", topic:"나눗셈의 몫 구하기 ★", content:"곱셈구구 활용 / 나눗셈 놀이 (평가)"},
+    {unit:"4. 곱셈", topic:"(몇십)×(몇) 계산", content:"올림 없는·십의 자리 올림 있는 곱셈"},
+    {unit:"4. 곱셈", topic:"일의 자리 올림 있는 (몇십몇)×(몇) ★", content:"십·일의 자리 올림 / 곱셈 놀이 (평가)"},
+    {unit:"5. 길이와 시간", topic:"mm·km 알기", content:"1cm보다 작은·1m보다 큰 단위"},
+    {unit:"5. 길이와 시간", topic:"시간의 덧셈·뺄셈", content:"초 단위 시각·시간 덧셈·뺄셈"},
+    {unit:"6. 분수와 소수", topic:"분수 알기", content:"똑같이 나누기·단위분수·크기 비교"},
+    {unit:"6. 분수와 소수", topic:"소수 알기·크기 비교", content:"소수 개념·1보다 큰 소수·크기 비교"},
+  ],
+  "3학년_도덕": [
+    {unit:"1. 나를 찾아 떠나는 여행", topic:"나를 알아보기·설명하기 ★", content:"강점·약점·감정 표현 (평가)"},
+    {unit:"2. 성실하게 사는 삶", topic:"성실의 뜻·실천 계획", content:"성실한 생활 연습"},
+    {unit:"3. 함께하는 우리 가족", topic:"효의 의미·실천 방법 ★", content:"가족 행복·효 실천 (평가)"},
+    {unit:"4. 인공지능 로봇 연구소에 가요!", topic:"인공지능과 나의 차이", content:"인공지능 로봇의 장단점"},
+    {unit:"5. 너와 나의 공감", topic:"공감의 뜻·방법", content:"다른 사람 감정에 공감하기"},
+    {unit:"6. 함께 가는 공정의 길", topic:"공정의 뜻·사례", content:"공정한 규칙 만들기"},
+    {unit:"7. 생명을 소중히 여기는 우리", topic:"생명의 소중함", content:"생명 존중 전시회"},
+    {unit:"8. 더 나은 세상을 위한 탐구", topic:"생명을 지키는 사람들", content:"더 나은 세상을 위한 실천"},
+  ],
+  "3학년_사회": [
+    {unit:"1. 우리가 사는 곳", topic:"주변 장소 경험과 느낌 이야기하기", content:"장소 떠올리기 / 다양한 방법으로 표현"},
+    {unit:"1. 우리가 사는 곳", topic:"놀이·여가·교육·문화·안전 장소 조사", content:"편익 제공 장소 역할·특징 조사"},
+    {unit:"1. 우리가 사는 곳", topic:"살기 좋은 곳 만들기 방안 탐색 ★", content:"좋은 점·불편한 점 조사·발표 (평가)"},
+    {unit:"2. 일상에서 만나는 과거", topic:"시간의 흐름 알기", content:"과거·현재 거리감 / 연표 만들기"},
+    {unit:"2. 일상에서 만나는 과거", topic:"오래된 물건·건축물로 과거 알기", content:"오래된 물건·건축물 탐색"},
+    {unit:"2. 일상에서 만나는 과거", topic:"지역 역사 자료 조사 ★", content:"지역 변화 신문 만들기 (평가)"},
+  ],
+  "3학년_과학": [
+    {unit:"1. 힘과 우리 생활", topic:"무게 비교하기 — 밀고 당기기", content:"힘의 크기 비교"},
+    {unit:"1. 힘과 우리 생활", topic:"수평 잡기로 무게 비교", content:"수평 잡기 활동"},
+    {unit:"1. 힘과 우리 생활", topic:"전자저울로 무게 정확히 비교 ★", content:"저울 필요성·올바른 사용법 (평가)"},
+    {unit:"1. 힘과 우리 생활", topic:"도구로 물체 들어올릴 때 힘 비교", content:"도구의 쓰임새"},
+    {unit:"2. 동물의 생활", topic:"여러 가지 동물 관찰·분류", content:"동물 특징에 따른 분류"},
+    {unit:"2. 동물의 생활", topic:"물·극지방·사막 동물 특징", content:"물갈퀴·지방 실험 / 생활용품 설계"},
+    {unit:"3. 식물의 생활", topic:"잎 관찰·분류", content:"여러 가지 식물 잎 관찰"},
+    {unit:"3. 식물의 생활", topic:"부레옥잠 관찰·물에 사는 식물 특징 ★", content:"물에 사는 식물 생김새 (평가)"},
+    {unit:"3. 식물의 생활", topic:"사막·높은 산 식물 특징", content:"알로에 관찰 / 식물원 만들기"},
+    {unit:"4. 생물의 한살이", topic:"씨앗 싹·식물 자라는 조건 실험", content:"필요한 조건 실험"},
+    {unit:"4. 생물의 한살이", topic:"배추흰나비 한살이 관찰·기록 ★", content:"한살이 보고서 작성 (평가)"},
+  ],
+  "3학년_음악": [
+    {unit:"1. 톡톡, 새롭게 출발해요", topic:"자진모리장단 노래·신체 표현", content:"자진모리장단 / 소고 바른 자세"},
+    {unit:"1. 톡톡, 새롭게 출발해요", topic:"가족에게 마음 전하는 노래 감상 ★", content:"노래 이용권 만들어 선물 (평가)"},
+    {unit:"2. 폴짝, 신나게 즐겨요", topic:"소리 찾기·목소리·악기로 표현", content:"소리가 있는 세상 노래"},
+    {unit:"2. 폴짝, 신나게 즐겨요", topic:"리코더 탐색·시라솔 운지 익히기", content:"바른 자세·텅잉 주법"},
+    {unit:"2. 폴짝, 신나게 즐겨요", topic:"비행기 완성 연주 ★", content:"리코더로 비행기 연주 (평가)"},
+    {unit:"2. 폴짝, 신나게 즐겨요", topic:"판소리 감상·가사 바꾸기", content:"화초장타령·학용품타령 만들기"},
+  ],
+  "3학년_미술": [
+    {unit:"1. 어디서 어떻게 만날까", topic:"생활 속 미술 찾기·미술 수집 가방", content:"미술의 특징·역할 발견"},
+    {unit:"2. 아롱다롱 다채롭게", topic:"주변의 색 탐색·10색상환", content:"색의 특성 살려 대상 표현"},
+    {unit:"2. 아롱다롱 다채롭게", topic:"색이 가득한 마을 꾸미기", content:"다양한 색 활용한 집·마을"},
+    {unit:"3. 긋고, 잇고, 세우고", topic:"여러 가지 선의 느낌 탐색", content:"선을 이어 모양 만들기"},
+    {unit:"3. 긋고, 잇고, 세우고", topic:"선·형으로 표현하기·입체 형태 만들기 ★", content:"색·선·형 표현 작품 감상 (평가)"},
+    {unit:"4. 우리가 지켜줄게", topic:"환경 미술 작품 살펴보기", content:"멸종 위기 동물 보호 캠페인 제작"},
+    {unit:"5. 감각 탐험대", topic:"감각 활용해 자연물·인공물 탐색", content:"감각 카드 만들기"},
+    {unit:"6. 보이는 대로", topic:"좋아하는 것 관찰·다양한 방법 표현", content:"하나의 대상 여러 방향에서 관찰·그리기"},
+    {unit:"7. 멋지다 미술관", topic:"전시 관람 예절·방법 알기 ★", content:"박물관·미술관 관람 예절 (평가)"},
+  ]
+};
+
+const STUDENTS = [
+  {id:"박ㅇ",   grade:3, disability:"자폐성장애",        aac:"손담(AAC)",    avatar:"av-teal",   init:"박"},
+  {id:"최ㅇ진", grade:3, disability:"청각장애+지적장애",  aac:"한글 AAC",     avatar:"av-amber",  init:"최"},
+  {id:"이ㅇ호", grade:1, disability:"지적장애",           aac:"전자식 AAC",   avatar:"av-pink",   init:"이"},
+  {id:"김ㅇ현", grade:3, disability:"",                   aac:"",             avatar:"av-blue",   init:"김"},
+  {id:"서ㅇ훈", grade:3, disability:"",                   aac:"",             avatar:"av-green",  init:"서"},
+];
+
+const IEP = {
+  "박ㅇ":   "의사소통: 손담으로 5초 내 거부 표현\n정서 조절: 불편 상황에서 중단 의사 표현 후 안전한 장소 이동",
+  "최ㅇ진": "국어(읽기): 받침 있는 글자 소리 내어 읽기\n국어(쓰기): 받침 있는 낱말 받아쓰기\n수학: 0~10 두 수 크기 비교",
+  "이ㅇ호": "국어(읽기): 친숙한 통글자 읽고 그림 고르기\n국어(쓰기): 자기 이름과 1-2음절 낱말 쓰기\n수학: 1~10 수 순서대로 배열",
+  "김ㅇ현": "국어(읽기): 복잡한 받침 낱말 80% 정확도 읽기\n국어(쓰기): 그림 보고 한 문장 쓰기\n사회성: 1단계 지시 5초 내 행동 시작",
+  "서ㅇ훈": "국어(읽기): 받침·이중모음·쌍자음 낱말 95% 정확도 읽기\n국어(쓰기): 연필 바르게 잡고 글자 쓰기\n수학(수): 1~50 크기 비교\n수학(연산): 합 9 이하 덧셈",
+};
+
+const SUBJECTS_G1 = ["국어","수학"];
+const SUBJECTS_G3 = ["국어","수학","도덕","사회","과학","음악","미술"];
+
+let state = {
+  step: 1,
+  g1Subject: null,
+  g3Subject: null,
+  g1Lessons: [],
+  g3Lessons: [],
+  students: [],
+};
+
+function updateProgress() {
+  [1,2,3,4].forEach(i => {
+    const el = document.getElementById("prog-"+i);
+    const pn = document.getElementById("pn-"+i);
+    el.className = "prog-item";
+    if(i < state.step) { el.classList.add("done"); pn.textContent = "✓"; }
+    else if(i === state.step) { el.classList.add("active"); pn.textContent = i; }
+    else { pn.textContent = i; }
+  });
+}
+
+function render() {
+  updateProgress();
+  const content = document.getElementById("step-content");
+  if(state.step === 1) content.innerHTML = renderStep1();
+  else if(state.step === 2) content.innerHTML = renderStep2();
+  else if(state.step === 3) content.innerHTML = renderStep3();
+  else if(state.step === 4) content.innerHTML = renderStep4();
+}
+
+function renderStep1() {
+  const g1Btns = SUBJECTS_G1.map(s =>
+    `<button class="subj-btn ${state.g1Subject===s?'g1-selected':''}" onclick="sel1('${s}')">${s}</button>`
+  ).join('');
+  const g3Btns = SUBJECTS_G3.map(s =>
+    `<button class="subj-btn ${state.g3Subject===s?'g3-selected':''}" onclick="sel3('${s}')">${s}</button>`
+  ).join('');
+
+  return `
+<div class="step-card">
+  <div class="step-card-title">
+    <span>융합할 교과 선택</span>
+  </div>
+  <div class="step-card-desc">1학년 교과 1개, 3학년 교과 1개를 선택하세요. 선택한 두 교과를 융합한 수업을 설계합니다.</div>
+  <div class="grade-label">
+    <span class="grade-dot" style="background:#1D9E75;"></span>
+    1학년
+  </div>
+  <div class="subj-row" style="margin-bottom:1.25rem;">${g1Btns}</div>
+  <div class="grade-label">
+    <span class="grade-dot" style="background:#378ADD;"></span>
+    3학년
+  </div>
+  <div class="subj-row">${g3Btns}</div>
+
+  ${state.g1Subject && state.g3Subject ? `
+  <div class="divider"></div>
+  <div style="font-size:13px;color:var(--gray-600);margin-bottom:8px;">선택된 융합 교과</div>
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+    <span class="chip chip-teal">1학년 ${state.g1Subject}</span>
+    <span style="color:var(--gray-400);font-size:18px;">+</span>
+    <span class="chip chip-blue">3학년 ${state.g3Subject}</span>
+  </div>
+  ` : ''}
+
+  <div class="btn-row">
+    <div></div>
+    <button class="btn-primary" ${state.g1Subject&&state.g3Subject?'':'disabled'} onclick="goTo(2)">
+      차시 연계하기
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>`;
+}
+
+function renderStep2() {
+  const g1Key = `1학년_${state.g1Subject}`;
+  const g3Key = `3학년_${state.g3Subject}`;
+  const g1Data = CURRICULUM[g1Key] || [];
+  const g3Data = CURRICULUM[g3Key] || [];
+
+  const g1List = g1Data.map((l,i) => `
+    <div class="lesson-item ${state.g1Lessons.includes(i)?'g1-sel':''}" onclick="toggleLesson(1,${i})">
+      <div class="checkbox"><div class="checkbox-tick"></div></div>
+      <div class="lesson-info">
+        <div class="lesson-unit">${l.unit}</div>
+        <div class="lesson-topic">${l.topic}</div>
+        <div class="lesson-content">${l.content}</div>
+      </div>
+    </div>`).join('');
+
+  const g3List = g3Data.map((l,i) => `
+    <div class="lesson-item ${state.g3Lessons.includes(i)?'g3-sel':''}" onclick="toggleLesson(3,${i})">
+      <div class="checkbox"><div class="checkbox-tick"></div></div>
+      <div class="lesson-info">
+        <div class="lesson-unit">${l.unit}</div>
+        <div class="lesson-topic">${l.topic}</div>
+        <div class="lesson-content">${l.content}</div>
+      </div>
+    </div>`).join('');
+
+  return `
+<div class="notice">
+  <span class="notice-icon">💡</span>
+  <span>연계가 어려운 차시도 억지로 묶어도 괜찮아요. 각 학년에서 1개 이상 선택하면 다음 단계로 이동할 수 있습니다.</span>
+</div>
+<div class="step-card">
+  <div class="step-card-title">차시 연계 선택</div>
+  <div class="step-card-desc">1학년 <strong style="color:var(--teal);">${state.g1Subject}</strong>과 3학년 <strong style="color:var(--blue);">${state.g3Subject}</strong> 차시를 각각 선택하세요.</div>
+  <div class="two-col">
+    <div class="col-wrap">
+      <div class="col-header g1">1학년 ${state.g1Subject} (${state.g1Lessons.length}개 선택)</div>
+      <div class="scroll-list">${g1List}</div>
+    </div>
+    <div class="col-wrap">
+      <div class="col-header g3">3학년 ${state.g3Subject} (${state.g3Lessons.length}개 선택)</div>
+      <div class="scroll-list">${g3List}</div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-ghost" onclick="goTo(1)">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11 7H3M6 10L3 7l3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      이전
+    </button>
+    <button class="btn-primary" ${state.g1Lessons.length&&state.g3Lessons.length?'':'disabled'} onclick="goTo(3)">
+      학생 선택
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>`;
+}
+
+function renderStep3() {
+  const g1Key = `1학년_${state.g1Subject}`;
+  const g3Key = `3학년_${state.g3Subject}`;
+  const g1Selected = state.g1Lessons.map(i => CURRICULUM[g1Key][i]?.topic).filter(Boolean);
+  const g3Selected = state.g3Lessons.map(i => CURRICULUM[g3Key][i]?.topic).filter(Boolean);
+
+  const studentBtns = STUDENTS.map(s => `
+    <button class="student-btn ${state.students.includes(s.id)?'sel':''}" onclick="toggleStudent('${s.id}')">
+      <div class="avatar ${s.avatar}">${s.init}</div>
+      <div>
+        <div class="student-name">${s.id}</div>
+        <div class="student-meta">${s.grade}학년${s.disability?' · '+s.disability:''}</div>
+        ${s.aac ? `<div class="aac-tag">AAC · ${s.aac}</div>` : ''}
+      </div>
+    </button>`).join('');
+
+  const iepItems = state.students.map(id => {
+    const s = STUDENTS.find(x => x.id === id);
+    return `<div class="iep-item">
+      <div class="iep-name">${s.id} (${s.grade}학년)</div>
+      <div class="iep-text">${IEP[id]||'IEP 목표 없음'}</div>
+    </div>`;
+  }).join('');
+
+  return `
+<div class="step-card">
+  <div class="step-card-title">연계 차시 확인</div>
+  <div class="chip-row">
+    ${g1Selected.map(t => `<span class="chip chip-teal">1학년 · ${t}</span>`).join('')}
+    ${g3Selected.map(t => `<span class="chip chip-blue">3학년 · ${t}</span>`).join('')}
+  </div>
+</div>
+<div class="step-card">
+  <div class="step-card-title">수업 참여 학생 선택</div>
+  <div class="step-card-desc">이 수업에 참여하는 학생을 선택하세요. 복수 선택 가능합니다.</div>
+  <div class="student-grid">${studentBtns}</div>
+
+  ${state.students.length ? `
+  <div class="divider"></div>
+  <div style="font-size:13px;font-weight:600;color:var(--gray-900);margin-bottom:8px;">선택된 학생 IEP 목표</div>
+  <div class="iep-list">${iepItems}</div>
+  ` : ''}
+
+  <div class="btn-row">
+    <button class="btn-ghost" onclick="goTo(2)">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11 7H3M6 10L3 7l3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      이전
+    </button>
+    <button class="btn-primary" ${state.students.length?'':'disabled'} onclick="goTo(4)">
+      수업 설계하기
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>`;
+}
+
+function renderStep4() {
+  const g1Key = `1학년_${state.g1Subject}`;
+  const g3Key = `3학년_${state.g3Subject}`;
+  const g1Lessons = state.g1Lessons.map(i => CURRICULUM[g1Key][i]).filter(Boolean);
+  const g3Lessons = state.g3Lessons.map(i => CURRICULUM[g3Key][i]).filter(Boolean);
+  const selStudents = STUDENTS.filter(s => state.students.includes(s.id));
+
+  const prompt = buildPrompt(g1Lessons, g3Lessons, selStudents);
+
+  const chips = [
+    ...g1Lessons.map(l => `<span class="chip chip-teal">1학년 ${state.g1Subject} · ${l.topic}</span>`),
+    ...g3Lessons.map(l => `<span class="chip chip-blue">3학년 ${state.g3Subject} · ${l.topic}</span>`),
+    ...selStudents.map(s => `<span class="chip chip-amber">${s.id}</span>`),
+  ].join('');
+
+  return `
+<div class="result-area">
+  <div class="result-label">수업 설계 요약</div>
+  <div class="chip-row">${chips}</div>
+</div>
+
+<div class="step-card">
+  <div class="step-card-title">Claude에게 수업 설계 요청하기</div>
+  <div class="step-card-desc" style="margin-bottom:1rem;">아래 버튼을 클릭하면 선택한 정보가 정리되어 Claude에게 전달됩니다. Claude가 수업 활동 2~3개와 IEP 삽입 방안을 설계해드립니다.</div>
+
+  <div style="text-align:center;padding:1rem 0;">
+    <button class="btn-ai" onclick="copyAndAlert()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2C5.8 2 4 3.8 4 6c0 1.5.8 2.8 2 3.5V11h4V9.5c1.2-.7 2-2 2-3.5 0-2.2-1.8-4-4-4z" fill="currentColor" opacity=".8"/><rect x="6" y="11" width="4" height="1.5" rx=".75" fill="currentColor"/><rect x="6.5" y="12.5" width="3" height="1" rx=".5" fill="currentColor"/></svg>
+      Claude에게 수업 설계 요청
+    </button>
+    <div style="margin-top:10px;font-size:12px;color:var(--gray-400);">
+      claude.ai 에서 이 도구를 열었다면 자동으로 전송됩니다.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="result-label">Claude에게 전달될 내용</div>
+  <pre class="prompt-box">${escapeHtml(prompt)}</pre>
+
+  <div class="btn-row">
+    <button class="btn-ghost" onclick="goTo(3)">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11 7H3M6 10L3 7l3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      이전
+    </button>
+    <button class="btn-ghost" onclick="resetAll()">처음부터 다시</button>
+  </div>
+</div>`;
+}
+
+function buildPrompt(g1Lessons, g3Lessons, students) {
+  let p = `[어울림1반 융합 수업 설계 요청]\n\n`;
+  p += `■ 1학년 ${state.g1Subject} 연계 차시:\n`;
+  g1Lessons.forEach(l => p += `  · [${l.unit}] ${l.topic}\n    내용: ${l.content}\n`);
+  p += `\n■ 3학년 ${state.g3Subject} 연계 차시:\n`;
+  g3Lessons.forEach(l => p += `  · [${l.unit}] ${l.topic}\n    내용: ${l.content}\n`);
+  p += `\n■ 참여 학생 및 IEP:\n`;
+  students.forEach(s => {
+    p += `  · ${s.id} (${s.grade}학년${s.disability?', '+s.disability:''}${s.aac?', AAC: '+s.aac:''})\n`;
+    if(IEP[s.id]) {
+      IEP[s.id].split('\n').forEach(line => p += `    - ${line}\n`);
+    }
+  });
+  p += `\n[요청 사항]\n수업 활동 2~3개를 설계해주세요. 다음 사항을 반드시 포함해주세요:\n`;
+  p += `1. 공통 활동 중심으로 학년별(1학년/3학년) 수준 차별화\n`;
+  p += `2. 각 학생의 IEP 목표를 활동에 삽입하는 방법 구체적으로 제시\n`;
+  p += `3. AAC 사용 학생을 위한 의사소통 지원 장면 포함\n`;
+  p += `4. 원래 성취기준과 수정된 성취기준을 함께 제시\n`;
+  p += `5. 평가 계획과 연계될 수 있도록 구성`;
+  return p;
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function sel1(s) { state.g1Subject = s; render(); }
+function sel3(s) { state.g3Subject = s; render(); }
+
+function toggleLesson(grade, idx) {
+  if(grade === 1) {
+    state.g1Lessons = state.g1Lessons.includes(idx)
+      ? state.g1Lessons.filter(i=>i!==idx)
+      : [...state.g1Lessons, idx];
+  } else {
+    state.g3Lessons = state.g3Lessons.includes(idx)
+      ? state.g3Lessons.filter(i=>i!==idx)
+      : [...state.g3Lessons, idx];
+  }
+  render();
+}
+
+function toggleStudent(id) {
+  state.students = state.students.includes(id)
+    ? state.students.filter(s=>s!==id)
+    : [...state.students, id];
+  render();
+}
+
+function goTo(step) {
+  state.step = step;
+  render();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function jumpStep(step) {
+  const prog = document.getElementById("prog-"+step);
+  if(prog.classList.contains('done') || prog.classList.contains('active')) goTo(step);
+}
+
+function resetAll() {
+  state = {step:1, g1Subject:null, g3Subject:null, g1Lessons:[], g3Lessons:[], students:[]};
+  render();
+}
+
+function copyAndAlert() {
+  const g1Key = `1학년_${state.g1Subject}`;
+  const g3Key = `3학년_${state.g3Subject}`;
+  const g1Lessons = state.g1Lessons.map(i => CURRICULUM[g1Key][i]).filter(Boolean);
+  const g3Lessons = state.g3Lessons.map(i => CURRICULUM[g3Key][i]).filter(Boolean);
+  const selStudents = STUDENTS.filter(s => state.students.includes(s.id));
+  const prompt = buildPrompt(g1Lessons, g3Lessons, selStudents);
+
+  if(typeof sendPrompt === 'function') {
+    sendPrompt(prompt);
+  } else {
+    navigator.clipboard.writeText(prompt).then(() => {
+      alert('📋 수업 설계 요청 내용이 클립보드에 복사됐어요!\nClaude(claude.ai)에 붙여넣기 해서 사용하세요.');
+    }).catch(() => {
+      alert('복사에 실패했어요. 아래 텍스트를 직접 복사해 Claude에 붙여넣기 하세요.');
+    });
+  }
+}
+
+render();
+</script>
+</body>
+</html>
